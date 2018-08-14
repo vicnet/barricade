@@ -1,0 +1,48 @@
+{
+  "name": "barricade",
+  "title": "Barricade",
+  "description": "Barricade Zombies",
+  "version": "0.1.0",
+  "homepage": "https://github.com/vicnet/barricade",
+  "author": {
+    "name": "Vicnet",
+    "email": "vo.publique@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vicnet/barricade.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vicnet/barricade/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/vicnet/barricade/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "reset": "npm run clean && npm run init",
+    "clean": "(rm -rf bower_components || rd /s/q bower_components) && (rm -rf node_modules || rd /s/q node_modules)",
+    "init": "npm install && bower install && grunt default devel",
+    "test": "grunt test"
+  },
+  "dependencies": {
+    "es6-promise": "^4.2.4"
+  },
+  "devDependencies": {
+    "@ambers/sdk": "^0.10.7",
+    "grunt": "1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-exec": "^2.0.0",
+    "requirejs": "^2.1.15"
+  },
+  "keywords": [
+    "Amber",
+    "Smalltalk"
+  ]
+}
