@@ -60,6 +60,11 @@ applyOn: board
 initialize
 	super initialize.
 	success := 3
+!
+
+printOn: stream
+	stream write: '⛉'.
+	dices printOn: stream
 ! !
 
 BZActionDice subclass: #BZActionKill
@@ -75,6 +80,11 @@ applyOn: board
 initialize
 	super initialize.
 	success := 3
+!
+
+printOn: stream
+	stream write: '🧟'.
+	dices printOn: stream
 ! !
 
 BZActionDice subclass: #BZActionRepair
@@ -90,6 +100,11 @@ applyOn: board
 initialize
 	super initialize.
 	success := 5
+!
+
+printOn: stream
+	stream write: '🚗'.
+	dices printOn: stream
 ! !
 
 BZAction subclass: #BZActions
@@ -132,6 +147,12 @@ kill: nbkill build: nbbuild repair: nbrepair
 		 repair: nbrepair
 !
 
+printOn: stream
+	actions do: [ :action |
+		action printOn: stream.
+		stream write: ' ' ]
+!
+
 repair: nb
 	"Nb dés affectés à la réparation dela voiture"
 	self add: nb class: BZActionRepair
@@ -149,6 +170,10 @@ BZAward subclass: #BZAwardKillAll
 
 applyOn: board
 	^ board killAll
+!
+
+printOn: stream
+	stream write: '🧟☠'
 ! !
 
 BZAward subclass: #BZAwardNoArrival
@@ -159,6 +184,10 @@ BZAward subclass: #BZAwardNoArrival
 
 applyOn: board
 	^ board noArrival
+!
+
+printOn: stream
+	stream write: '🧟✘'
 ! !
 
 BZAward subclass: #BZAwardRebuild
@@ -169,6 +198,10 @@ BZAward subclass: #BZAwardRebuild
 
 applyOn: board
 	^ board build: 3
+!
+
+printOn: stream
+	stream write: '⛉3'
 ! !
 
 BZAward subclass: #BZAwardRepair
@@ -179,10 +212,14 @@ BZAward subclass: #BZAwardRepair
 
 applyOn: board
 	^ board repair: 1
+!
+
+printOn: stream
+	stream write: '🚗1'
 ! !
 
 Object subclass: #BZBoard
-	instanceVariableNames: 'zombies killed barricade garage noArrival'
+	instanceVariableNames: 'zombies killed barricade garage noArrival award'
 	package: 'Barricade'!
 !BZBoard commentStamp!
 Plateau de jeu;
@@ -193,8 +230,9 @@ Plateau de jeu;
 
 !BZBoard methodsFor: 'as yet unclassified'!
 
-actions: actions
+apply: actions
 	"Applique les actions"
+	award := false.
 	actions applyOn: self
 !
 
@@ -210,6 +248,10 @@ attack
 	^ self lost not
 !
 
+award
+	^ award
+!
+
 build: nb
 	"Reconstruit la barricade"
 	barricade := (barricade+nb>10)
@@ -223,7 +265,8 @@ initialize
 	killed := 0.
 	barricade := 10.
 	garage := 0.
-	noArrival := false
+	noArrival := false.
+	award := false
 !
 
 kill: nb
@@ -237,7 +280,7 @@ kill: nb
 	killed := killed + nbreal.
 	"test si dépassement de 10 zombies tués"
 	(killed >= 10)
-		ifTrue: [ killed := killed-10. ^ true ].
+		ifTrue: [ killed := killed-10. award := true. ^ true ].
 	^ false
 !
 
@@ -299,8 +342,60 @@ Jeu avec application des différentes phases!
 
 !BZGame methodsFor: 'as yet unclassified'!
 
+actions
+	"^ BZActions new kill: 2; repair: 2"
+	| actions max dices |
+	max := 4.
+	actions := BZActions new.
+
+	dices := ((max+1) atRandom) - 1.
+	actions kill: dices.
+	max := max - dices.
+
+	dices := ((max+1) atRandom) - 1.
+	actions build: dices.
+	max := max - dices.
+
+	dices := max.
+	actions repair: dices.
+	
+	^ actions
+!
+
+awards
+	"^ BZAwardRepair new"
+	^ {BZAwardKillAll. BZAwardNoArrival. BZAwardRebuild. BZAwardRepair} atRandom new
+!
+
+end
+	board lost ifTrue: [ ^ true ].
+	board win ifTrue: [ ^ true ].
+	^ false
+!
+
+evaluate
+	board lost ifTrue: [ ^ -100].
+	board win ifTrue: [ ^ 100].
+	^ 0
+!
+
 initialize
 	board := BZBoard new
+!
+
+play
+	| actions |
+	board arrival.
+	actions := self actions.
+	board apply: actions.
+	board attack.
+	Transcript show: actions; show: ' => '; show: board; cr.
+	self end ifTrue: [ ^ board ].
+	board award ifTrue: [
+		actions := self awards.
+		board apply: actions.
+		Transcript show: '☘ '; show: actions; show: ' => '; show: board; cr ].
+	^ board
 ! !
 
 Object subclass: #Barricade

@@ -245,6 +245,31 @@ messageSends: ["initialize"]
 }),
 $globals.BZActionBuild);
 
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("⛉");
+$recv($self["@dices"])._printOn_(stream);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZActionBuild)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '⛉'.\x0a\x09dices printOn: stream",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:", "printOn:"]
+}),
+$globals.BZActionBuild);
+
 
 
 $core.addClass("BZActionKill", $globals.BZActionDice, [], "Barricade");
@@ -303,6 +328,31 @@ messageSends: ["initialize"]
 }),
 $globals.BZActionKill);
 
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("🧟");
+$recv($self["@dices"])._printOn_(stream);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZActionKill)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '🧟'.\x0a\x09dices printOn: stream",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:", "printOn:"]
+}),
+$globals.BZActionKill);
+
 
 
 $core.addClass("BZActionRepair", $globals.BZActionDice, [], "Barricade");
@@ -358,6 +408,31 @@ source: "initialize\x0a\x09super initialize.\x0a\x09success := 5",
 referencedClasses: [],
 //>>excludeEnd("ide");
 messageSends: ["initialize"]
+}),
+$globals.BZActionRepair);
+
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("🚗");
+$recv($self["@dices"])._printOn_(stream);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZActionRepair)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '🚗'.\x0a\x09dices printOn: stream",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:", "printOn:"]
 }),
 $globals.BZActionRepair);
 
@@ -523,6 +598,39 @@ $globals.BZActions);
 
 $core.addMethod(
 $core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self["@actions"])._do_((function(action){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$recv(action)._printOn_(stream);
+return $recv(stream)._write_(" ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({action:action},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZActions)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09actions do: [ :action |\x0a\x09\x09action printOn: stream.\x0a\x09\x09stream write: ' ' ]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["do:", "printOn:", "write:"]
+}),
+$globals.BZActions);
+
+$core.addMethod(
+$core.method({
 selector: "repair:",
 protocol: "as yet unclassified",
 fn: function (nb){
@@ -574,6 +682,30 @@ messageSends: ["killAll"]
 }),
 $globals.BZAwardKillAll);
 
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("🧟☠");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZAwardKillAll)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '🧟☠'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:"]
+}),
+$globals.BZAwardKillAll);
+
 
 
 $core.addClass("BZAwardNoArrival", $globals.BZAward, [], "Barricade");
@@ -597,6 +729,30 @@ source: "applyOn: board\x0a\x09^ board noArrival",
 referencedClasses: [],
 //>>excludeEnd("ide");
 messageSends: ["noArrival"]
+}),
+$globals.BZAwardNoArrival);
+
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("🧟✘");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZAwardNoArrival)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '🧟✘'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:"]
 }),
 $globals.BZAwardNoArrival);
 
@@ -626,6 +782,30 @@ messageSends: ["build:"]
 }),
 $globals.BZAwardRebuild);
 
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("⛉3");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZAwardRebuild)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '⛉3'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:"]
+}),
+$globals.BZAwardRebuild);
+
 
 
 $core.addClass("BZAwardRepair", $globals.BZAward, [], "Barricade");
@@ -652,30 +832,55 @@ messageSends: ["repair:"]
 }),
 $globals.BZAwardRepair);
 
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "as yet unclassified",
+fn: function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._write_("🚗1");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream},$globals.BZAwardRepair)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream write: '🚗1'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["write:"]
+}),
+$globals.BZAwardRepair);
 
 
-$core.addClass("BZBoard", $globals.Object, ["zombies", "killed", "barricade", "garage", "noArrival"], "Barricade");
+
+$core.addClass("BZBoard", $globals.Object, ["zombies", "killed", "barricade", "garage", "noArrival", "award"], "Barricade");
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.BZBoard.comment="Plateau de jeu;\x0a- zombies: nb de zombie vivant courant\x0a- killed: nb de zombies tués\x0a- barricade: point de vie de la barricade\x0a- garage: etat de la voiture";
 //>>excludeEnd("ide");
 $core.addMethod(
 $core.method({
-selector: "actions:",
+selector: "apply:",
 protocol: "as yet unclassified",
 fn: function (actions){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+$self["@award"]=false;
 $recv(actions)._applyOn_(self);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"actions:",{actions:actions},$globals.BZBoard)});
+}, function($ctx1) {$ctx1.fill(self,"apply:",{actions:actions},$globals.BZBoard)});
 //>>excludeEnd("ctx");
 },
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["actions"],
-source: "actions: actions\x0a\x09\x22Applique les actions\x22\x0a\x09actions applyOn: self",
+source: "apply: actions\x0a\x09\x22Applique les actions\x22\x0a\x09award := false.\x0a\x09actions applyOn: self",
 referencedClasses: [],
 //>>excludeEnd("ide");
 messageSends: ["applyOn:"]
@@ -732,6 +937,24 @@ $globals.BZBoard);
 
 $core.addMethod(
 $core.method({
+selector: "award",
+protocol: "as yet unclassified",
+fn: function (){
+var self=this,$self=this;
+return $self["@award"];
+
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "award\x0a\x09^ award",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: []
+}),
+$globals.BZBoard);
+
+$core.addMethod(
+$core.method({
 selector: "build:",
 protocol: "as yet unclassified",
 fn: function (nb){
@@ -775,12 +998,13 @@ $self["@killed"]=(0);
 $self["@barricade"]=(10);
 $self["@garage"]=(0);
 $self["@noArrival"]=false;
+$self["@award"]=false;
 return self;
 
 },
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "initialize\x0a\x09\x22Etat initial du jeu\x22\x0a\x09zombies := 0.\x0a\x09killed := 0.\x0a\x09barricade := 10.\x0a\x09garage := 0.\x0a\x09noArrival := false",
+source: "initialize\x0a\x09\x22Etat initial du jeu\x22\x0a\x09zombies := 0.\x0a\x09killed := 0.\x0a\x09barricade := 10.\x0a\x09garage := 0.\x0a\x09noArrival := false.\x0a\x09award := false",
 referencedClasses: [],
 //>>excludeEnd("ide");
 messageSends: []
@@ -812,6 +1036,7 @@ $self["@killed"]=$recv($self["@killed"]).__plus(nbreal);
 $2=$recv($self["@killed"]).__gt_eq((10));
 if($core.assert($2)){
 $self["@killed"]=$recv($self["@killed"]).__minus((10));
+$self["@award"]=true;
 return true;
 }
 return false;
@@ -821,7 +1046,7 @@ return false;
 },
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["nb"],
-source: "kill: nb\x0a\x09\x22Tue des zombies, au max de ce qui existent\x0a\x09 Retourne vrai si 10 zombies tués, Faux sinon\x22\x0a\x09| nbreal |\x0a\x09nbreal := nb.\x0a\x09(zombies < nb)\x0a\x09\x09ifTrue: [ nbreal := zombies ].\x0a\x09zombies := zombies - nbreal.\x0a\x09killed := killed + nbreal.\x0a\x09\x22test si dépassement de 10 zombies tués\x22\x0a\x09(killed >= 10)\x0a\x09\x09ifTrue: [ killed := killed-10. ^ true ].\x0a\x09^ false",
+source: "kill: nb\x0a\x09\x22Tue des zombies, au max de ce qui existent\x0a\x09 Retourne vrai si 10 zombies tués, Faux sinon\x22\x0a\x09| nbreal |\x0a\x09nbreal := nb.\x0a\x09(zombies < nb)\x0a\x09\x09ifTrue: [ nbreal := zombies ].\x0a\x09zombies := zombies - nbreal.\x0a\x09killed := killed + nbreal.\x0a\x09\x22test si dépassement de 10 zombies tués\x22\x0a\x09(killed >= 10)\x0a\x09\x09ifTrue: [ killed := killed-10. award := true. ^ true ].\x0a\x09^ false",
 referencedClasses: [],
 //>>excludeEnd("ide");
 messageSends: ["ifTrue:", "<", "-", "+", ">="]
@@ -1064,6 +1289,145 @@ $globals.BZGame.comment="Jeu avec application des différentes phases";
 //>>excludeEnd("ide");
 $core.addMethod(
 $core.method({
+selector: "actions",
+protocol: "as yet unclassified",
+fn: function (){
+var self=this,$self=this;
+var actions,max,dices;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$1;
+max=(4);
+actions=$recv($globals.BZActions)._new();
+$2=$recv(max).__plus((1));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["+"]=1;
+//>>excludeEnd("ctx");
+$1=$recv($2)._atRandom();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["atRandom"]=1;
+//>>excludeEnd("ctx");
+dices=$recv($1).__minus((1));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=1;
+//>>excludeEnd("ctx");
+$recv(actions)._kill_(dices);
+max=$recv(max).__minus(dices);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=2;
+//>>excludeEnd("ctx");
+dices=$recv($recv($recv(max).__plus((1)))._atRandom()).__minus((1));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=3;
+//>>excludeEnd("ctx");
+$recv(actions)._build_(dices);
+max=$recv(max).__minus(dices);
+dices=max;
+$recv(actions)._repair_(dices);
+return actions;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"actions",{actions:actions,max:max,dices:dices},$globals.BZGame)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "actions\x0a\x09\x22^ BZActions new kill: 2; repair: 2\x22\x0a\x09| actions max dices |\x0a\x09max := 4.\x0a\x09actions := BZActions new.\x0a\x0a\x09dices := ((max+1) atRandom) - 1.\x0a\x09actions kill: dices.\x0a\x09max := max - dices.\x0a\x0a\x09dices := ((max+1) atRandom) - 1.\x0a\x09actions build: dices.\x0a\x09max := max - dices.\x0a\x0a\x09dices := max.\x0a\x09actions repair: dices.\x0a\x09\x0a\x09^ actions",
+referencedClasses: ["BZActions"],
+//>>excludeEnd("ide");
+messageSends: ["new", "-", "atRandom", "+", "kill:", "build:", "repair:"]
+}),
+$globals.BZGame);
+
+$core.addMethod(
+$core.method({
+selector: "awards",
+protocol: "as yet unclassified",
+fn: function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($recv([$globals.BZAwardKillAll,$globals.BZAwardNoArrival,$globals.BZAwardRebuild,$globals.BZAwardRepair])._atRandom())._new();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"awards",{},$globals.BZGame)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "awards\x0a\x09\x22^ BZAwardRepair new\x22\x0a\x09^ {BZAwardKillAll. BZAwardNoArrival. BZAwardRebuild. BZAwardRepair} atRandom new",
+referencedClasses: ["BZAwardKillAll", "BZAwardNoArrival", "BZAwardRebuild", "BZAwardRepair"],
+//>>excludeEnd("ide");
+messageSends: ["new", "atRandom"]
+}),
+$globals.BZGame);
+
+$core.addMethod(
+$core.method({
+selector: "end",
+protocol: "as yet unclassified",
+fn: function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2;
+$1=$recv($self["@board"])._lost();
+if($core.assert($1)){
+return true;
+}
+$2=$recv($self["@board"])._win();
+if($core.assert($2)){
+return true;
+}
+return false;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"end",{},$globals.BZGame)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "end\x0a\x09board lost ifTrue: [ ^ true ].\x0a\x09board win ifTrue: [ ^ true ].\x0a\x09^ false",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["ifTrue:", "lost", "win"]
+}),
+$globals.BZGame);
+
+$core.addMethod(
+$core.method({
+selector: "evaluate",
+protocol: "as yet unclassified",
+fn: function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2;
+$1=$recv($self["@board"])._lost();
+if($core.assert($1)){
+return (-100);
+}
+$2=$recv($self["@board"])._win();
+if($core.assert($2)){
+return (100);
+}
+return (0);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"evaluate",{},$globals.BZGame)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "evaluate\x0a\x09board lost ifTrue: [ ^ -100].\x0a\x09board win ifTrue: [ ^ 100].\x0a\x09^ 0",
+referencedClasses: [],
+//>>excludeEnd("ide");
+messageSends: ["ifTrue:", "lost", "win"]
+}),
+$globals.BZGame);
+
+$core.addMethod(
+$core.method({
 selector: "initialize",
 protocol: "as yet unclassified",
 fn: function (){
@@ -1083,6 +1447,77 @@ source: "initialize\x0a\x09board := BZBoard new",
 referencedClasses: ["BZBoard"],
 //>>excludeEnd("ide");
 messageSends: ["new"]
+}),
+$globals.BZGame);
+
+$core.addMethod(
+$core.method({
+selector: "play",
+protocol: "as yet unclassified",
+fn: function (){
+var self=this,$self=this;
+var actions;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2,$3;
+$recv($self["@board"])._arrival();
+actions=$self._actions();
+$recv($self["@board"])._apply_(actions);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["apply:"]=1;
+//>>excludeEnd("ctx");
+$recv($self["@board"])._attack();
+$recv($globals.Transcript)._show_(actions);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["show:"]=1;
+//>>excludeEnd("ctx");
+$recv($globals.Transcript)._show_(" => ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["show:"]=2;
+//>>excludeEnd("ctx");
+$recv($globals.Transcript)._show_($self["@board"]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["show:"]=3;
+//>>excludeEnd("ctx");
+$1=$recv($globals.Transcript)._cr();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["cr"]=1;
+//>>excludeEnd("ctx");
+$2=$self._end();
+if($core.assert($2)){
+return $self["@board"];
+}
+$3=$recv($self["@board"])._award();
+if($core.assert($3)){
+actions=$self._awards();
+$recv($self["@board"])._apply_(actions);
+$recv($globals.Transcript)._show_("☘ ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["show:"]=4;
+//>>excludeEnd("ctx");
+$recv($globals.Transcript)._show_(actions);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["show:"]=5;
+//>>excludeEnd("ctx");
+$recv($globals.Transcript)._show_(" => ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["show:"]=6;
+//>>excludeEnd("ctx");
+$recv($globals.Transcript)._show_($self["@board"]);
+$recv($globals.Transcript)._cr();
+}
+return $self["@board"];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"play",{actions:actions},$globals.BZGame)});
+//>>excludeEnd("ctx");
+},
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "play\x0a\x09| actions |\x0a\x09board arrival.\x0a\x09actions := self actions.\x0a\x09board apply: actions.\x0a\x09board attack.\x0a\x09Transcript show: actions; show: ' => '; show: board; cr.\x0a\x09self end ifTrue: [ ^ board ].\x0a\x09board award ifTrue: [\x0a\x09\x09actions := self awards.\x0a\x09\x09board apply: actions.\x0a\x09\x09Transcript show: '☘ '; show: actions; show: ' => '; show: board; cr ].\x0a\x09^ board",
+referencedClasses: ["Transcript"],
+//>>excludeEnd("ide");
+messageSends: ["arrival", "actions", "apply:", "attack", "show:", "cr", "ifTrue:", "end", "award", "awards"]
 }),
 $globals.BZGame);
 
