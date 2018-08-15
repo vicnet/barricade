@@ -21,6 +21,10 @@ dice
 	^ (6 atRandom)
 !
 
+dices
+	^ dices
+!
+
 dices: nb
 	dices := nb
 !
@@ -117,6 +121,7 @@ Dés affectés comme actions!
 
 add: nb class: class
 	"Nb dés affectés à une action"
+	nb isZero ifTrue: [ ^ self ].
 	actions add: (class new dices: nb)
 !
 
@@ -252,11 +257,23 @@ award
 	^ award
 !
 
+barricade
+	^ barricade
+!
+
 build: nb
 	"Reconstruit la barricade"
 	barricade := (barricade+nb>10)
 		ifFalse: [ barricade+nb ]
 		ifTrue:  [ 10 ]
+!
+
+end
+	^ self lost | self win
+!
+
+garage
+	^ garage
 !
 
 initialize
@@ -288,6 +305,10 @@ killAll
 	"Tue tous les zombies.
 	 Retourne vrai si 10 zombies tués, Faux sinon"
 	 ^ self kill: zombies
+!
+
+killed
+	^ killed
 !
 
 lost
@@ -332,18 +353,168 @@ repair: nb
 
 win
 	^ garage>=100
+!
+
+zombies
+	^ zombies
 ! !
 
 Object subclass: #BZGame
-	instanceVariableNames: 'board'
+	instanceVariableNames: ''
 	package: 'Barricade'!
 !BZGame commentStamp!
 Jeu avec application des différentes phases!
 
 !BZGame methodsFor: 'as yet unclassified'!
 
+evaluate: strat for: nb
+	^ ((1 to: nb) inject: 0 into: [ :sum :each | sum + (self play: strat) ]) * 100 / nb
+!
+
+initialize
+!
+
+play: strat
+	| board |
+	board := BZBoard new.
+	[ board end ] whileFalse: [ self play: board with: strat ].
+	^ board lost not
+!
+
+play: board with: strat
+	| actions |
+	board arrival.
+	actions := strat actions: board.
+	board apply: actions.
+	board attack.
+	"TODO replace by event"
+	"Transcript show: actions; show: ' => '; show: board; cr."
+	board end ifTrue: [ ^ board ].
+	board award ifTrue: [
+		actions := strat awards: board.
+		board apply: actions ]
+		"TODO replace by event"
+		"Transcript show: '☘ '; show: actions; show: ' => '; show: board; cr ]."
+! !
+
+Object subclass: #BZStrategy
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+!BZStrategy methodsFor: 'as yet unclassified'!
+
 actions
-	"^ BZActions new kill: 2; repair: 2"
+	"Retourne une liste d'action avec 4 dés"
+	^ nil
+!
+
+actions: board
+	"Retourne une liste d'action avec 4 dés"
+	^ self actions
+!
+
+awards
+	"Retourne une liste d'action de type récompense"
+	^ nil
+!
+
+awards: board
+	"Retourne une liste d'action de type récompense"
+	^ self awards
+! !
+
+BZStrategy subclass: #BZStratAggressive
+	instanceVariableNames: ''
+	package: 'Barricade'!
+!BZStratAggressive commentStamp!
+Only kill zombies with actions and awards.!
+
+!BZStratAggressive methodsFor: 'as yet unclassified'!
+
+actions
+	^ BZActionKill new dices: 4
+!
+
+awards
+	^ BZAwardKillAll new
+! !
+
+BZStrategy subclass: #BZStratKillAwardRepair
+	instanceVariableNames: ''
+	package: 'Barricade'!
+!BZStratKillAwardRepair commentStamp!
+Only kill zombies with actions and use award to repair car.!
+
+!BZStratKillAwardRepair methodsFor: 'as yet unclassified'!
+
+actions
+	^ BZActionKill new dices: 4
+!
+
+awards
+	^ BZAwardRepair new
+! !
+
+BZStrategy subclass: #BZStratMonteCarlo
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+!BZStratMonteCarlo methodsFor: 'as yet unclassified'!
+
+actions: board
+	| actions max dices |
+	max := 4.
+	actions := BZActions new.
+
+	(board zombies > 0) ifTrue: [
+		dices := ((max+1) atRandom) - 1.
+		actions kill: dices.
+		max := max - dices ].
+
+	(board barricade < 10) ifTrue: [
+		dices := ((max+1) atRandom) - 1.
+		actions build: dices.
+		max := max - dices ].
+
+	dices := max.
+	actions repair: dices.
+	
+	^ actions
+!
+
+allActions
+	| list |
+	list := {}.
+	(0 to: 4) do: [ :kill |
+		(0 to: 4-kill) do: [ :build |
+			list add: (BZActions new
+				kill: kill;
+				build: build;
+				repair: 4-kill-build)]
+		].
+	^ list
+!
+
+allActions: board
+	^ self allActions select: [ :action |
+		]
+!
+
+awards: board
+	| actions |
+	actions := {BZAwardNoArrival. BZAwardRepair}.
+	(board zombies > 0) ifTrue: [ actions add: BZAwardKillAll ].
+	(board barricade < 10) ifTrue: [ actions add: BZAwardRebuild ].
+	^ actions atRandom new
+! !
+
+BZStrategy subclass: #BZStratRandom
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+!BZStratRandom methodsFor: 'as yet unclassified'!
+
+actions
 	| actions max dices |
 	max := 4.
 	actions := BZActions new.
@@ -363,39 +534,42 @@ actions
 !
 
 awards
-	"^ BZAwardRepair new"
 	^ {BZAwardKillAll. BZAwardNoArrival. BZAwardRebuild. BZAwardRepair} atRandom new
+! !
+
+BZStrategy subclass: #BZStratRandomPlus
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+!BZStratRandomPlus methodsFor: 'as yet unclassified'!
+
+actions: board
+	| actions max dices |
+	max := 4.
+	actions := BZActions new.
+
+	(board zombies > 0) ifTrue: [
+		dices := ((max+1) atRandom) - 1.
+		actions kill: dices.
+		max := max - dices ].
+
+	(board barricade < 10) ifTrue: [
+		dices := ((max+1) atRandom) - 1.
+		actions build: dices.
+		max := max - dices ].
+
+	dices := max.
+	actions repair: dices.
+	
+	^ actions
 !
 
-end
-	board lost ifTrue: [ ^ true ].
-	board win ifTrue: [ ^ true ].
-	^ false
-!
-
-evaluate
-	board lost ifTrue: [ ^ -100].
-	board win ifTrue: [ ^ 100].
-	^ 0
-!
-
-initialize
-	board := BZBoard new
-!
-
-play
+awards: board
 	| actions |
-	board arrival.
-	actions := self actions.
-	board apply: actions.
-	board attack.
-	Transcript show: actions; show: ' => '; show: board; cr.
-	self end ifTrue: [ ^ board ].
-	board award ifTrue: [
-		actions := self awards.
-		board apply: actions.
-		Transcript show: '☘ '; show: actions; show: ' => '; show: board; cr ].
-	^ board
+	actions := {BZAwardNoArrival. BZAwardRepair}.
+	(board zombies > 0) ifTrue: [ actions add: BZAwardKillAll ].
+	(board barricade < 10) ifTrue: [ actions add: BZAwardRebuild ].
+	^ actions atRandom new
 ! !
 
 Object subclass: #Barricade
