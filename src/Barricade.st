@@ -155,7 +155,7 @@ kill: nbkill build: nbbuild repair: nbrepair
 printOn: stream
 	actions do: [ :action |
 		action printOn: stream.
-		stream write: ' ' ]
+		stream write: ',' ]
 !
 
 repair: nb
@@ -167,6 +167,12 @@ BZAction subclass: #BZAward
 	instanceVariableNames: ''
 	package: 'Barricade'!
 
+!BZAward methodsFor: 'as yet unclassified'!
+
+applyOn: board
+	board awarded
+! !
+
 BZAward subclass: #BZAwardKillAll
 	instanceVariableNames: ''
 	package: 'Barricade'!
@@ -174,6 +180,7 @@ BZAward subclass: #BZAwardKillAll
 !BZAwardKillAll methodsFor: 'as yet unclassified'!
 
 applyOn: board
+	super applyOn: board.
 	^ board killAll
 !
 
@@ -188,6 +195,7 @@ BZAward subclass: #BZAwardNoArrival
 !BZAwardNoArrival methodsFor: 'as yet unclassified'!
 
 applyOn: board
+	super applyOn: board.
 	^ board noArrival
 !
 
@@ -202,6 +210,7 @@ BZAward subclass: #BZAwardRebuild
 !BZAwardRebuild methodsFor: 'as yet unclassified'!
 
 applyOn: board
+	super applyOn: board.
 	^ board build: 3
 !
 
@@ -216,6 +225,7 @@ BZAward subclass: #BZAwardRepair
 !BZAwardRepair methodsFor: 'as yet unclassified'!
 
 applyOn: board
+	super applyOn: board.
 	^ board repair: 1
 !
 
@@ -223,8 +233,90 @@ printOn: stream
 	stream write: '🚗1'
 ! !
 
+Object subclass: #BZAnnounceStep
+	instanceVariableNames: 'board actions'
+	package: 'Barricade'!
+
+!BZAnnounceStep methodsFor: 'as yet unclassified'!
+
+actions
+	^ actions
+!
+
+actions: action
+	actions := action
+!
+
+board
+	^ board
+!
+
+board: aboard
+	board := aboard
+!
+
+board: aboard actions: action
+	board := aboard.
+	actions := action
+! !
+
+BZAnnounceStep subclass: #BZAnnounceAction
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+BZAnnounceStep subclass: #BZAnnounceAward
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+Announcer subclass: #BZAnnouncer
+	instanceVariableNames: 'silent old'
+	package: 'Barricade'!
+
+!BZAnnouncer methodsFor: 'as yet unclassified'!
+
+announce: board actions: actions
+	silent ifTrue: [ ^ self ].
+	self announce: (BZAnnounceAction new board: board actions: actions)
+!
+
+announce: board award: actions
+	silent ifTrue: [ ^ self ].
+	self announce: (BZAnnounceAward new board: board actions: actions)
+!
+
+initialize
+	super initialize.
+	silent := false.
+	old := false
+!
+
+restore
+	silent := old
+!
+
+silence
+	old := silent.
+	silent := true
+!
+
+switch
+	silent := silent not
+! !
+
+BZAnnouncer class instanceVariableNames: 'current'!
+
+!BZAnnouncer class methodsFor: 'as yet unclassified'!
+
+current
+	^ current ifNil: [ current := super new ]
+!
+
+new
+	self shouldNotImplement
+! !
+
 Object subclass: #BZBoard
-	instanceVariableNames: 'zombies killed barricade garage noArrival award'
+	instanceVariableNames: 'zombies killed barricade garage noArrival'
 	package: 'Barricade'!
 !BZBoard commentStamp!
 Plateau de jeu;
@@ -237,7 +329,6 @@ Plateau de jeu;
 
 apply: actions
 	"Applique les actions"
-	award := false.
 	actions applyOn: self
 !
 
@@ -254,11 +345,19 @@ attack
 !
 
 award
-	^ award
+	^ killed>=10
+!
+
+awarded
+	^ killed := killed-10
 !
 
 barricade
 	^ barricade
+!
+
+barricade: nb
+	barricade := nb
 !
 
 build: nb
@@ -276,29 +375,29 @@ garage
 	^ garage
 !
 
+garage: nb
+	garage := nb
+!
+
 initialize
 	"Etat initial du jeu"
 	zombies := 0.
 	killed := 0.
 	barricade := 10.
 	garage := 0.
-	noArrival := false.
-	award := false
+	noArrival := false
 !
 
 kill: nb
 	"Tue des zombies, au max de ce qui existent
-	 Retourne vrai si 10 zombies tués, Faux sinon"
+	 Retourne vrai si récompense (10 zombies tués), Faux sinon"
 	| nbreal |
 	nbreal := nb.
 	(zombies < nb)
 		ifTrue: [ nbreal := zombies ].
 	zombies := zombies - nbreal.
 	killed := killed + nbreal.
-	"test si dépassement de 10 zombies tués"
-	(killed >= 10)
-		ifTrue: [ killed := killed-10. award := true. ^ true ].
-	^ false
+	^ self award
 !
 
 killAll
@@ -357,6 +456,10 @@ win
 
 zombies
 	^ zombies
+!
+
+zombies: nb
+	zombies := nb
 ! !
 
 Object subclass: #BZGame
@@ -371,30 +474,31 @@ evaluate: strat for: nb
 	^ ((1 to: nb) inject: 0 into: [ :sum :each | sum + (self play: strat) ]) * 100 / nb
 !
 
-initialize
-!
-
 play: strat
-	| board |
-	board := BZBoard new.
-	[ board end ] whileFalse: [ self play: board with: strat ].
-	^ board lost not
+	^ self play: BZBoard new with: strat
 !
 
 play: board with: strat
+	[ board end ] whileFalse: [ self playOne: board with: strat ].
+	^ board lost not
+!
+
+playOne: board with: strat
+	"Joue un tour"
 	| actions |
 	board arrival.
 	actions := strat actions: board.
 	board apply: actions.
 	board attack.
-	"TODO replace by event"
-	"Transcript show: actions; show: ' => '; show: board; cr."
+	"notify every body"
+	BZAnnouncer current announce: board actions: actions.
+	"on continu avec les récompenses"
 	board end ifTrue: [ ^ board ].
 	board award ifTrue: [
 		actions := strat awards: board.
-		board apply: actions ]
-		"TODO replace by event"
-		"Transcript show: '☘ '; show: actions; show: ' => '; show: board; cr ]."
+		board apply: actions.
+		"notify every body"
+		BZAnnouncer current announce: board award: actions ].
 ! !
 
 Object subclass: #BZStrategy
@@ -421,6 +525,35 @@ awards
 awards: board
 	"Retourne une liste d'action de type récompense"
 	^ self awards
+! !
+
+BZStrategy subclass: #BZStratAdapt
+	instanceVariableNames: ''
+	package: 'Barricade'!
+!BZStratAdapt commentStamp!
+Only kill zombies with actions and use award to repair car.!
+
+!BZStratAdapt methodsFor: 'as yet unclassified'!
+
+actions: board
+	| kill build |
+	"si plein de zombies, on massacre"
+	(board zombies >= 4) ifTrue: [
+		^ BZActionKill new dices: 4 ].
+	"sinon on massacre que ce qu'il faut"
+	kill := board zombies.
+	"on répare que si c'est nécessaire"
+	build := 0.
+	(board barricade < 6) ifTrue: [
+		build := 1 ].
+	^ BZActions new kill: kill; build: build; repair: 4-kill-build
+!
+
+awards: board
+	(board zombies >= 3) ifTrue: [ ^ BZAwardKillAll new ].
+	(board barricade <= 6) ifTrue: [ ^ BZAwardRebuild new ].
+	(board garage >= 80) ifTrue: [ ^ BZAwardNoArrival new ].
+	^ BZAwardRepair new
 ! !
 
 BZStrategy subclass: #BZStratAggressive
@@ -456,48 +589,41 @@ awards
 ! !
 
 BZStrategy subclass: #BZStratMonteCarlo
-	instanceVariableNames: ''
+	instanceVariableNames: 'game test'
 	package: 'Barricade'!
 
 !BZStratMonteCarlo methodsFor: 'as yet unclassified'!
 
 actions: board
-	| actions max dices |
-	max := 4.
-	actions := BZActions new.
-
-	(board zombies > 0) ifTrue: [
-		dices := ((max+1) atRandom) - 1.
-		actions kill: dices.
-		max := max - dices ].
-
-	(board barricade < 10) ifTrue: [
-		dices := ((max+1) atRandom) - 1.
-		actions build: dices.
-		max := max - dices ].
-
-	dices := max.
-	actions repair: dices.
-	
+	| actions max |
+	BZAnnouncer current silence.
+	max = nil.
+	(self allActions: board) do: [ :action | | val |
+		val := self evaluate: action on: board.
+"Transcript show: 'test action : '; show: action; show: ' => '; show: val; cr."
+		(val < max) ifFalse: [
+			actions := action.
+			max := val ].
+		].
+	BZAnnouncer current restore.
 	^ actions
 !
 
-allActions
+allActions: board
 	| list |
 	list := {}.
 	(0 to: 4) do: [ :kill |
-		(0 to: 4-kill) do: [ :build |
-			list add: (BZActions new
-				kill: kill;
-				build: build;
-				repair: 4-kill-build)]
+		(0 to: 4-kill) do: [ :build | | bad |
+			bad := ((board zombies <= 0) & (kill > 0))
+				 | ((board barricade >= 10) & (build > 0)).
+			bad ifFalse: [
+				list add: (BZActions new
+					kill: kill;
+					build: build;
+					repair: 4-kill-build) ]
+				]
 		].
 	^ list
-!
-
-allActions: board
-	^ self allActions select: [ :action |
-		]
 !
 
 awards: board
@@ -506,6 +632,46 @@ awards: board
 	(board zombies > 0) ifTrue: [ actions add: BZAwardKillAll ].
 	(board barricade < 10) ifTrue: [ actions add: BZAwardRebuild ].
 	^ actions atRandom new
+!
+
+evaluate: action on: board
+	"test strategy on current board"
+	^ (1 to: 500) inject: 0 into: [ :sum :each |
+		"set first action to do for testing"
+		test first: action.
+		"evaluate on current board"
+		sum + (game play: board copy with: test) ]
+!
+
+initialize
+	game := BZGame new.
+	test := BZStratOneThenOther new.
+	test next: BZStratRandomPlus new
+! !
+
+BZStrategy subclass: #BZStratOneThenOther
+	instanceVariableNames: 'actions next'
+	package: 'Barricade'!
+!BZStratOneThenOther commentStamp!
+Return one defined action first time call then call other strategy.!
+
+!BZStratOneThenOther methodsFor: 'as yet unclassified'!
+
+actions: board
+	actions isNil ifFalse: [ |old| old:=actions. actions:=nil. ^ old ].
+	^ next actions: board
+!
+
+awards: board
+	^ next awards: board
+!
+
+first: action
+	actions := action
+!
+
+next: strat
+	next := strat
 ! !
 
 BZStrategy subclass: #BZStratRandom
@@ -570,6 +736,23 @@ awards: board
 	(board zombies > 0) ifTrue: [ actions add: BZAwardKillAll ].
 	(board barricade < 10) ifTrue: [ actions add: BZAwardRebuild ].
 	^ actions atRandom new
+! !
+
+Object subclass: #BZTranscript
+	instanceVariableNames: ''
+	package: 'Barricade'!
+
+!BZTranscript methodsFor: 'as yet unclassified'!
+
+initialize
+	BZAnnouncer current on: BZAnnounceAction do: [ :step |
+		Transcript show: step actions; show: ' => '; show: step board; cr ].
+	BZAnnouncer current on: BZAnnounceAward do: [ :step |
+		Transcript show: '☘ '; show: step actions; show: ' => '; show: step board; cr ]
+!
+
+uninitialize
+	BZAnnouncer current unsubscribe: nil
 ! !
 
 Object subclass: #Barricade
